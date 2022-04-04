@@ -4,5 +4,11 @@
         "rules": {
             "id": ""
         }
+    },
+    "events": {
+        "guildMemberAdd": {
+            "channelID": "",
+            "content": "You can use the %MEMBERID% variable in the message content."
+        }
     }
 }
