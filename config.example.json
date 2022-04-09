@@ -4,6 +4,11 @@
         "rules": {
             "id": "",
             "roleID": ""
+        },
+        "roles": {
+            "primordial": {
+                "id": ""
+            }
         }
     },
     "events": {
