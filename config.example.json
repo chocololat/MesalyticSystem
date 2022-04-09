@@ -2,7 +2,8 @@
     "token": "",
     "componentsID": {
         "rules": {
-            "id": ""
+            "id": "",
+            "roleID": ""
         }
     },
     "events": {

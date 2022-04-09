@@ -17,7 +17,7 @@ client.on('interactionCreate', async interaction => {
     if (interaction.customId === componentsID.rules.id) {
         interaction.reply({ content: 'Tu as validé le règlement.', ephemeral: true });
 
-        interaction.member.roles.add("960604119117201508");
+        interaction.member.roles.add(componentsID.rules.roleID);
     }
 })
 
