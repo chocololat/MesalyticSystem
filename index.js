@@ -1,19 +1,67 @@
-const { Client, Intents, MessageActionRow, MessageButton, MessageSelectMenu } = require('discord.js');
+const { REST } = require('@discordjs/rest');
+const { Client, Intents, MessageActionRow, MessageButton, MessageSelectMenu, Collection } = require('discord.js');
+const { Routes } = require("discord-api-types/v9");
+const { readdirSync } = require('fs');
+
 const { token, componentsID, events } = require('./config.json');
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const bot = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
-client.once('ready', async () => {
+bot.commands = new Collection();
+
+
+(async() => {
+    let cmds = [];
+    const cmdFiles = readdirSync("./commands").filter((file) => file.endsWith(".js"))
+
+    for (const file of cmdFiles) {
+        const command = require(`./commands/${file}`);
+        bot.commands.set(command.data.name, command);
+    }
+
+    for (const file of cmdFiles) {
+        const command = require(`./commands/${file}`);
+        cmds.push(command.data.toJSON());
+    }
+
+    try {
+        const rest = new REST({ version: "9" }).setToken(token);
+        console.log("started refreshing /cmds");
+
+        await rest.put(
+            Routes.applicationGuildCommands("960627025599676447", "960597800620527636"),
+            { body: cmds }
+        );
+
+        console.log("reloaded /cmds");
+    } catch (e) {
+        console.error(e);
+    }
+})();
+
+bot.once('ready', async () => {
 	console.log('Ready!');
 });
 
-client.on("guildMemberAdd", member => {
-    let channel = client.guilds.cache.first().channels.cache.get(events.guildMemberAdd.channelID);
+bot.on("guildMemberAdd", member => {
+    let channel = bot.guilds.cache.first().channels.cache.get(events.guildMemberAdd.channelID);
 
     channel.send({ content: events.guildMemberAdd.content.replace("%MEMBERID%", member.id) })
 })
 
-client.on('interactionCreate', async interaction => {
+bot.on('interactionCreate', async interaction => {
+    if (interaction.isCommand()) {
+        const command = bot.commands.get(interaction.commandName);
+        
+        if (!command) return;
+
+        try {
+            await command.execute(interaction, bot);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
     if (interaction.customId === componentsID.rules.id) {
         interaction.reply({ content: 'Tu as validé le règlement.', ephemeral: true });
 
@@ -158,4 +206,4 @@ client.on('interactionCreate', async interaction => {
     }
 })
 
-client.login(token);
+bot.login(token);
