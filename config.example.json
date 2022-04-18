@@ -1,6 +1,9 @@
 {
     "token": "",
-    "pkToken": "",
+    "pluralKit": {
+        "pkToken": "",
+        "systemID": ""
+    },
     "componentsID": {
         "rules": {
             "id": "",

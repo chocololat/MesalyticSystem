@@ -9,6 +9,16 @@ const bot = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
 bot.commands = new Collection();
 
+let interactionObject = [
+    {
+        name: 'Abby',
+        value: 'abby'
+    },
+    {
+        name: 'Kylee',
+        value: 'kylee'
+    }
+];
 
 (async() => {
     let cmds = [];
@@ -60,6 +70,10 @@ bot.on('interactionCreate', async interaction => {
         } catch (e) {
             console.error(e);
         }
+    }
+
+    if (interaction.isAutocomplete()) {
+        interaction.respond(interactionObject)
     }
 
     if (interaction.customId === componentsID.rules.id) {
